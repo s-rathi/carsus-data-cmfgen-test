@@ -1,4 +1,4 @@
-name: Notification on SLACK
+name: Check CMFGEN data update workflow
 
 on:
   schedule:
