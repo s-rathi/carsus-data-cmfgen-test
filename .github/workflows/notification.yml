@@ -21,8 +21,29 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-      - name: slack-send
-        uses: pcolby/post-to-slack@v1
+     # - name: slack-send
+     #   uses: pcolby/post-to-slack@v1
+     #   with:
+     #     url: ${{ secrets.SLACK_WEBHOOK }}
+     #     text: Hello world!
+                    
+      - name: Send custom JSON data to Slack workflow
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          url: ${{ secrets.SLACK_WEBHOOK }}
-          text: Hello world!
+          payload: |
+            {
+              "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
